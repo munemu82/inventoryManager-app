@@ -3,6 +3,10 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const userRoute = require("./routes/userRoute");
+const errorHandler = require("./middleWare/errorMiddleware");
+const cookieParser = require("cookie-parser");
+const path = require("path");
 
 const app = express();
 
@@ -16,11 +20,20 @@ app.use(
     credentials: true,
   })
 );
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// Routes Middleware
+app.use("/api/users", userRoute);
 
 // Routes
 app.get("/", (req, res) => {
     res.send("Home Page");
   });
+
+// Error Middleware
+app.use(errorHandler);
+
+//Connect to DB and start Server
 const PORT = process.env.PORT || 5000;
 console.log(process.env.MONGO_URI)
 mongoose
